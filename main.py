@@ -1,5 +1,6 @@
 import socket
 import threading
+from client import Client
 from sqlServer import SQLServer
 from decoder import MQTTDecoder
 from packet_creator import (
@@ -56,6 +57,13 @@ def handle_client(conn, addr):
 
                     # If connection is successful (reason code 0x00), add to active connections
                     if reason_code == 0x00:
+                        connected_client = Client(
+                            decoded_packet.get("client_id"),
+                            decoded_packet.get("username"),
+                            decoded_packet.get("password"),
+                            decoded_packet.get("clean_session"),
+                            60
+                        )
                         active_connections[decoded_packet.get("client_id")] = conn
                         print(f"Client '{decoded_packet.get('client_id')}' connected successfully.")
                     else:
